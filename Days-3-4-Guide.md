@@ -65,7 +65,7 @@ $ source .nix-profile/setup.bash
 
     Check IPFS topic messages (useful for debugging)
     ```
-    $ ipfs pubsub sub --discover cyberprinter42.lighthouse.1.robonomics.eth
+    $ ipfs pubsub sub --discover airalab.lighthouse.1.robonomics.eth
     ```
 
 3. Forming Bid manually (will do it with python scipt below)
@@ -81,9 +81,15 @@ deadline: 40000"
 
 4. Liability node start
 TBD: what is Liability 
+*FOR OWN LIGHTHOUSE*
 ```
 $ roslaunch robonomics_liability liability.launch lighthouse_contract:=cyberprinter42.lighthouse.1.robonomics.eth ens_contract:=0x0E8C00046B6821410031D4461054c67B39e2ee33 factory_contract:=factory.1.robonomics.eth
 ```
+*FOR MASTER LIGHTHOUSE*
+```
+$ roslaunch robonomics_liability liability.launch lighthouse_contract:=airalab.lighthouse.1.robonomics.eth ens_contract:=0x0E8C00046B6821410031D4461054c67B39e2ee33 factory_contract:=factory.1.robonomics.eth
+```
+
 
 5. Register to the Lighthouse contract
     See [Day-2[(Day-2)] for details
@@ -137,13 +143,41 @@ We got this error somewhere in the process
 [ERROR] [1535015999.323287]: Broken transaction: {'code': -32000, 'message': 'gas required exceeds allowance or always failing transaction'}
 ```
 
-Solved by switching to Master Ligthghouse node
+Solved by switching to Master Ligthghouse node (instead of own Lighthouse node): 
+
 ```
 $ roslaunch robonomics_liability liability.launch lighthouse_contract:=airalab.lighthouse.1.robonomics.eth ens_contract:=0x0E8C00046B6821410031D4461054c67B39e2ee33 factory_contract:=factory.1.robonomics.eth
 ```
+l.refill(1000)
 
 Every time Lighthouse or your Node gets rebooted - check IPFS connections
 ```
 $ ipfs swarm connect /ip6/fca2:d099:c448:8666:e3f1:f39e:aad0:ea07/tcp/4001/ipfs/QmZbznJh9bAGDptdiRYcrLN4cM8h9D2jwSCTgrKRj3KayE
 $ ping fca2:d099:c448:8666:e3f1:f39e:aad0:ea07
 ```
+
+Approve to lightghouse and factory
+```
+truffle --network robonomics2018 console
+> l = LighthouseLib.at('0x51e34728da95597c182A092Ea1a0EaDf0d915580')
+> xrt = XRT.at("0xFAc8dFd86E64a59b4A3572469fBb20c4C3793990")
+> xrt.approve(l.address,1000)
+> xrt.allowance(web3.eth.accounts[0],l.address)
+> f = LiabilityFactory.at("0x5330bfd1e0AF4E6Abc8F7f6ECc9A980C62C75959")
+> xrt.approve(f.address,1000)
+> 
+
+```
+
+Geth has no peers 
+```
+> admin.peers
+[]
+```
+Нужно подконнектиться к ним
+```
+ipfs swarm connect "/ip6/fc52:735:525b:7aa:3450:3b0b:e03f:6d1f/tcp/4001/ipfs/QmZB2JPt8bhkQbBnjpwzdgaqZMmJupx85R7r9f1e5stmKs"
+ipfs swarm connect "/ip6/fca2:d099:c448:8666:e3f1:f39e:aad0:ea07/tcp/4001/ipfs/QmZbznJh9bAGDptdiRYcrLN4cM8h9D2jwSCTgrKRj3KayE"
+```
+
+Если не проходит пинг к пирам, то:

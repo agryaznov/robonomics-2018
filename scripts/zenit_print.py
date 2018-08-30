@@ -7,14 +7,17 @@ from std_srvs.srv import Empty
 def path(model):
 	return {
 		"model1": "monopoly/shaman/blue_shaman.gco",
-		"model2": "robonomics2018/abs_phone_holder.gco",
+		"model2": "monopoly/alllover.gco",
 		"model3": "monopoly/eth/ether.gco"
 	}[model]
 
 def callback(data):
 	rospy.loginfo("GOTCHA!")
 
-	conn = http.client.HTTPConnection("192.168.107.73")
+	# ip6 of the printer is fced:97fd:da23:b15d:7897:4fa6:57b3:f2a3
+	conn = http.client.HTTPConnection("192.168.0.87")
+	# conn = http.client.HTTPConnection("127.0.0.1:8081")
+	# conn = http.client.HTTPConnection("http://[fced:97fd:da23:b15d:7897:4fa6:57b3:f2a3]")
 
 	payload = "{\"command\":\"select\",\"print\":true}"
 
@@ -41,7 +44,8 @@ def callback(data):
 
 if __name__ == '__main__':
     rospy.init_node("zenit_print_node")
-
+    
+    # callback(String('model1'))
     rospy.Subscriber('task', String, callback)
     # rospy.Subscriber('/liability/current', Liability, callback)
 

@@ -97,6 +97,7 @@ ipfs pubsub sub --discover airalab-mesh
 Publish a message to the channel
 ```
 ipfs pubsub pub airalab-mesh "   F.CK THE GOVERNER\!    "
+
 ```
 
 12. Share your file through the IPFS
